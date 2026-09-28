@@ -1,0 +1,16 @@
+<!doctype html><html><body style="margin:0;background:#2a2238">
+<canvas id="c" width="1500" height="1000"></canvas>
+<script src="../src/util.js"></script><script src="../src/gfx.js"></script><script src="../src/art_chars.js"></script><script src="../src/art_enemies.js"></script><script src="../src/art_world.js"></script>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');x.imageSmoothingEnabled=false;
+let py=4;
+Object.keys(THEMES).forEach((th,i)=>{
+  let px=4;
+  ['floor','alt','accent','wall','top','water','carpet','grass'].forEach(k=>{x.drawImage(TileArt.ground(th,k,0,0),px,py+ (i*0),32,32);px+=34;});
+  Object.keys(THEMES[th].props).forEach(k=>{x.drawImage(TileArt.prop(th,THEMES[th].props[k]),px,py-32,36,68);px+=38;});
+  py+=40;
+});
+// backgrounds
+const bgs=['aurelle','opera','catacombs','woods','temple','terminus','datacore','lacuna','title'];
+bgs.forEach((b,i)=>{ const cv=Art.bg(b); x.drawImage(cv,(i%4)*370+4,330+Math.floor(i/4)*210,360,203*(b==='title'?1:1)); });
+</script></body></html>

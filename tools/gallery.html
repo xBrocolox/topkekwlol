@@ -1,0 +1,17 @@
+<!doctype html><html><body style="margin:0;background:#2a2238">
+<canvas id="c" width="1200" height="760"></canvas>
+<script src="../src/util.js"></script><script src="../src/gfx.js"></script><script src="../src/art_chars.js"></script>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');x.imageSmoothingEnabled=false;
+const ids=['vesper','gaspard','ilse','tally','curator','oriel','aura','citizenM','citizenF','merchant','guard','child','singer','choirF','choirM','avatarA','avatarB','avatarC'];
+let px=8;
+ids.forEach((id,i)=>{
+  const col=i%9,row=Math.floor(i/9);
+  const bx=8+col*130, by=8+row*370;
+  ['down','up','left'].forEach((d,j)=>{x.drawImage(Art.field(id,d,0),bx+j*34,by,16*2+4,24*2+4);});
+  x.drawImage(Art.field(id,'left',1),bx+102,by,36,52);
+  x.drawImage(Art.portrait(id,'n'),bx,by+62,128,128);
+  x.drawImage(Art.battle(id,'idle',0),bx,by+196,88,84);
+  x.drawImage(Art.battle(id,'attack',0),bx+40,by+280,88,84);
+});
+</script></body></html>

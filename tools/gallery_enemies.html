@@ -1,0 +1,9 @@
+<!doctype html><html><body style="margin:0;background:#2a2238">
+<canvas id="c" width="1300" height="760"></canvas>
+<script src="../src/util.js"></script><script src="../src/gfx.js"></script><script src="../src/art_chars.js"></script><script src="../src/art_enemies.js"></script>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');x.imageSmoothingEnabled=false;
+const ids=Object.keys(ENEMY_ART);
+let px=8,py=8,rowH=0;
+ids.forEach(id=>{const cv=Art.enemy(id);const s=cv.height>70?2:3; const w=cv.width*s,h=cv.height*s; if(px+w>1290){px=8;py+=rowH+8;rowH=0;} x.drawImage(cv,px,py,w,h); x.fillStyle='#fff';x.font='10px monospace';x.fillText(id,px,py+h+10); px+=w+10; rowH=Math.max(rowH,h+12);});
+</script></body></html>

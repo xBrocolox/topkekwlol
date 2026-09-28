@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#07030f">
+<title>Vermilion Requiem</title>
+<meta name="description" content="A JRPG in four frames: Judgment Rings, telegraphed parries, combo techs and a dying server. Runs entirely in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #07030f; overflow: hidden; overscroll-behavior: none; touch-action: none; -webkit-user-select: none; user-select: none; }
+  body { display: flex; align-items: center; justify-content: center; }
+  #game { display: block; background: #000; box-shadow: 0 0 60px rgba(200,40,62,0.25); }
+  #touch { display: none; position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+  #touch.on { display: block; }
+  #touch button { pointer-events: auto; position: absolute; width: 58px; height: 58px; border-radius: 50%; border: 1.5px solid rgba(232,200,104,0.7);
+    background: rgba(20,10,40,0.55); color: #f4ecda; font: 700 18px Cinzel, serif; -webkit-tap-highlight-color: transparent; touch-action: none; backdrop-filter: blur(2px); }
+  #touch button.down { background: rgba(200,40,62,0.6); transform: scale(0.94); }
+  #touch .dp { left: 14px; bottom: 14px; width: 174px; height: 174px; position: absolute; }
+  #touch .dp button { width: 56px; height: 56px; border-radius: 14px; font-size: 16px; }
+  #touch [data-a=up] { left: 59px; top: 0; } #touch [data-a=down] { left: 59px; bottom: 0; }
+  #touch [data-a=left] { left: 0; top: 59px; } #touch [data-a=right] { right: 0; top: 59px; }
+  #touch [data-a=ok] { right: 20px; bottom: 74px; width: 66px; height: 66px; }
+  #touch [data-a=cancel] { right: 96px; bottom: 30px; }
+  #touch [data-a=menu] { right: 16px; top: 12px; width: 42px; height: 42px; font-size: 14px; }
+  #touch [data-a=run] { right: 20px; bottom: 148px; width: 42px; height: 42px; font-size: 11px; }
+  noscript { color: #f4ecda; font: 16px Georgia, serif; }
+</style>
+</head>
+<body>
+<canvas id="game" width="960" height="540"></canvas>
+<div id="touch">
+  <div class="dp">
+    <button data-a="up">▲</button><button data-a="left">◀</button><button data-a="right">▶</button><button data-a="down">▼</button>
+  </div>
+  <button data-a="run">RUN</button>
+  <button data-a="cancel">B</button>
+  <button data-a="ok">A</button>
+  <button data-a="menu">☰</button>
+</div>
+<noscript>This game needs JavaScript.</noscript>
+<script src="assets/ai/manifest.js"></script>
+<!-- SRC:START -->
+<script src="src/util.js"></script>
+<script src="src/input.js"></script>
+<script src="src/gfx.js"></script>
+<script src="src/art_chars.js"></script>
+<script src="src/art_enemies.js"></script>
+<script src="src/art_world.js"></script>
+<script src="src/audio.js"></script>
+<script src="src/data.js"></script>
+<script src="src/game.js"></script>
+<script src="src/ui.js"></script>
+<script src="src/fx.js"></script>
+<script src="src/field.js"></script>
+<script src="src/battle.js"></script>
+<script src="src/battle_draw.js"></script>
+<script src="src/menu.js"></script>
+<script src="src/story.js"></script>
+<script src="src/main.js"></script>
+<!-- SRC:END -->
+</body>
+</html>
