@@ -6,7 +6,7 @@
 
 function installDirector(opts) {
   const V = window.__vr, { Main, Battle: B, Game: G, Dlg, Input, SKILLS, CHARS, ITEMS } = V;
-  const D = window.__dir = { seed: opts.seed || 1, plan: null, think: 0, cursorT: 0, stats: { parry: 0, dodge: 0, block: 0, hit: 0, interrupts: 0, crits: 0, rings: 0, minHP: 1, techs: 0, fusions: 0, requiems: 0, heals: 0 } };
+  const D = window.__dir = { seed: opts.seed || 1, plan: null, think: 0, cursorT: 0, stats: { parry: 0, dodge: 0, block: 0, hit: 0, interrupts: 0, crits: 0, rings: 0, minHP: 1, parry_: 0, techs: 0, fusions: 0, requiems: 0, heals: 0 } };
   const rnd = () => (D.seed = (D.seed * 16807) % 2147483647) / 2147483647;
   const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) * 1.2;
   const press = a => { Input.pressed[a] = true; };
@@ -18,6 +18,11 @@ function installDirector(opts) {
   B.avoidFx = function (e, v, kind) { D.stats[kind === 'parry' ? 'parry' : 'dodge']++; return origAvoid(e, v, kind); };
   const origInterrupt = B.interrupt.bind(B);
   B.interrupt = function (e) { const r = origInterrupt(e); if (r) D.stats.interrupts++; return r; };
+  D.log = [];
+  const origExec = B.execMove.bind(B);
+  B.execMove = function (e, mv) { D.log.push({ t: +B.t.toFixed(1), move: mv.n, ch: !!mv.ch }); return origExec(e, mv); };
+  const origDefend = B.defend.bind(B);
+  B.defend = function (e, target, type, isAll) { return origDefend(e, target, type, isAll).then(r => { D.stats[r === 'parry' ? 'parry_' : r]++; D.log.push({ t: +B.t.toFixed(1), defence: r, type }); return r; }); };
   const origPerform = B.perform.bind(B);
   B.perform = function (act) {
     if (act.type === 'tech') D.stats.techs++;
@@ -38,7 +43,7 @@ function installDirector(opts) {
     const inv = G.S.inv;
     // 1. interrupt a charging boss with Tally (the signature .hack move)
     if (charging) {
-      if (a.id === 'tally' && a.mp >= SKILLS.t_drain.mp) return { k: 'skill', sk: 't_drain' };
+      if (a.id === 'tally' && a.mp >= SKILLS.t_drain.mp) return { k: 'skill', sk: (rnd() < 0.5 && a.mp >= SKILLS.t_rootkit.mp) ? 't_rootkit' : 't_drain' };
       if (tally && tally.alive && a !== tally && B.turnQ.includes(tally)) return { k: 'switch' };
     }
     // 2. keep everyone alive
@@ -60,7 +65,6 @@ function installDirector(opts) {
     if (a.id === 'tally') {
       const boss = foes[0];
       if (!a.stat.haste && !party.some(p => p.stat.haste) && a.mp >= SKILLS.t_step.mp && !D.hasted) { D.hasted = true; return { k: 'skill', sk: 't_step' }; }
-      if (boss && !boss.stat.corrupt && a.mp >= SKILLS.t_rootkit.mp && rnd() < 0.7) return { k: 'skill', sk: 't_rootkit' };
       if (party.some(p => hpF(p) < 0.7) && a.mp >= SKILLS.t_drain.mp) return { k: 'skill', sk: 't_drain' };
       return { k: 'skill', sk: pick(['t_overflow', 't_attack']) || 't_attack' };
     }
@@ -106,7 +110,7 @@ function installDirector(opts) {
         const heavy = d.type === 'h';
         d.mode = heavy ? 'dodge' : (rnd() < (d.type === 'f' ? 0.6 : 0.74) ? 'parry' : 'dodge');
         d.aimOff = d.mode === 'parry' ? -0.03 + gauss() * 0.018 : -0.075 + gauss() * 0.03;
-        if (rnd() < (opts.mistake || 0.06)) { d.aimOff = 0.11; d.mode = 'late'; } // a slip: takes the hit
+        if (rnd() < (opts.mistake || 0.12)) { d.aimOff = 0.11; d.mode = 'late'; } // a slip: takes the hit
       }
       const off = d.t + 1 / 60 - d.T;
       if (!d.press && off >= d.aimOff && off < d.aimOff + 0.05) press(d.mode === 'dodge' ? 'cancel' : 'ok');

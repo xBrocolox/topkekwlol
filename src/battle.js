@@ -14,6 +14,8 @@ function foeSlots(n, boss) {
   return T[Math.min(n, 4)];
 }
 const angDiff = (a, b) => Math.abs(a - b);
+/* share of normal gauge speed while someone is mid-action (rings, animations, telegraphs) */
+const ACT_FLOW = 0.55;
 
 const Battle = {
   active: false, mode: 'idle', t: 0, busy: false, party: [], foes: [], turnQ: [], cmd: null, tsel: null, ring: null, defw: null,
@@ -102,6 +104,7 @@ const Battle = {
     if (c.stat.stun || c.stunT > 0) return 0;
     let r = c.s.spd * 100 / 72;
     if (c.stat.haste) r *= 1.5; if (c.stat.slow) r *= 0.6;
+    if (c.side === 'e') r *= [0.88, 1, 1.15][Game.settings.diff === undefined ? 1 : Game.settings.diff];   // Hard: enemies also act faster
     return r;
   },
   pose(c, p, t = 0.3) { c.pose = p; c.poseT = t; },
@@ -126,8 +129,8 @@ const Battle = {
     this.animate(dt);
     if (this.banner) { this.banner.t += dt; if (this.banner.t > this.banner.dur) this.banner = null; }
     if (this.nameTag) { this.nameTag.t += dt; if (this.nameTag.t > 1.3) this.nameTag = null; }
-    if (this.ring) return this.updateRing(dt);
-    if (this.defw) return this.updateDef(dt);
+    if (this.ring) { this.tickATB(dt * ACT_FLOW); return this.updateRing(dt); }
+    if (this.defw) { this.tickATB(dt * ACT_FLOW); return this.updateDef(dt); }
     switch (this.mode) {
       case 'idle': this.updateIdle(dt); break;
       case 'cmd': this.updateCmd(dt); break;
@@ -148,7 +151,7 @@ const Battle = {
   },
 
   updateIdle(dt) {
-    if (this.busy) return;
+    if (this.busy) { this.tickATB(dt * ACT_FLOW); return; }
     this.tickATB(dt);
     if (this.hooks.length) { this.runHook(); return; }
     const first = this.turnQ.find(c => c.alive);
@@ -176,6 +179,7 @@ const Battle = {
         if (c.charging.t >= c.charging.mv.ch) { c.readyMove = c.charging.mv; c.charging = null; this.turnQ.unshift(c); }
         continue;
       }
+      if (c.acting) continue;
       if (c.atb < 100) c.atb = Math.min(100, c.atb + this.rate(c) * dt);
       if (c.atb >= 100 && !this.turnQ.includes(c) && !(c.stunT > 0)) { this.turnQ.push(c); if (c.side === 'p') { c.guard = false; Snd.sfx('ready'); } }
     }
@@ -363,11 +367,15 @@ const Battle = {
     action.actor = a;
     this.mode = 'idle'; this.cmd = null; this.busy = true;
     this.turnQ = this.turnQ.filter(c => c !== a);
+    a.acting = true;
+    const partners = action.type === 'tech' ? TECHS[action.tech].need.map(n => this.party.find(p => p.id === n)) : [a];
+    for (const m of partners) if (m) m.acting = true;
+    const done = () => { for (const m of partners) if (m) m.acting = false; a.acting = false; };
     this.perform(action).then(async () => {
-      this.busy = false;
+      done(); this.busy = false;
       if (a.alive) { a.atb = 0; }
       await this.checkEnd();
-    }).catch(e => { console.error(e); this.busy = false; a.atb = 0; });
+    }).catch(e => { console.error(e); done(); this.busy = false; a.atb = 0; });
   },
 
   /* --------------------------------------------------------- perform (P) */
@@ -437,7 +445,7 @@ const Battle = {
     let cur = targets[0] && (isHeal || targets[0].alive) ? targets[0] : (isHeal ? targets[0] : this.alive('e')[0]);
     if (!cur) return;
     let landed = 0, totalDmg = 0, critN = 0;
-    const foesHit = new Set();
+    const foesHit = new Set(), weakHit = new Set();
     const res = await this.runRing(a, sk.ring, { name: sk.name, col: elCol, n }, (i, q) => {
       if (q === 'miss') return;
       landed++; if (q === 'crit') critN++;
@@ -464,11 +472,13 @@ const Battle = {
         foesHit.add(t);
         if (sk.drain) { const h = Math.round(dmg * sk.drain); a.hp = Math.min(a.maxhp, a.hp + h); const hp = this.head(a); FX.text(hp.x, hp.y, '+' + h, '#80ffb0', 9); }
         if (sk.interrupt) this.interrupt(t);
-        if (wk > 1) t.atb = Math.max(0, t.atb - 12);
+        if (wk > 1) weakHit.add(t);
       }
       a.reson = Math.min(100, a.reson + (a.side === 'p' ? 6 : 0));
       cur = (cur.alive ? cur : (this.alive('e')[0] || cur));
     });
+    // exploiting a weakness staggers once per action (not per hit), and bosses shrug most of it off
+    for (const t of weakHit) if (t.alive && !t.charging) t.atb = Math.max(0, t.atb - (t.boss ? 4 : 18));
     if (!isHeal && sk.mpDrain && landed) { const g = sk.mpDrain * landed; a.mp = Math.min(a.maxmp, a.mp + g); const h = this.head(a); FX.text(h.x, h.y - 10, '+' + g + ' MP', '#8ab0ff', 8); }
     if (!isHeal && sk.st && landed) {
       for (const t of foesHit) if (t.alive && R.chance(sk.st.ch * (landed / n))) this.addStatus(t, sk.st.id, sk.st.dur);
@@ -655,7 +665,7 @@ const Battle = {
     this.turnQ = this.turnQ.filter(c => c !== e);
     if (!e.alive) return;
     if (e.stunT > 0) { e.atb = 0; return; }
-    this.busy = true;
+    this.busy = true; e.acting = true;
     (async () => {
       let mv = e.readyMove; e.readyMove = null;
       if (!mv) {
@@ -669,7 +679,7 @@ const Battle = {
       }
       await this.execMove(e, mv);
       if (e.alive) e.atb = 0;
-    })().then(async () => { this.busy = false; await this.checkEnd(); }).catch(err => { console.error(err); this.busy = false; e.atb = 0; });
+    })().then(async () => { e.acting = false; this.busy = false; await this.checkEnd(); }).catch(err => { console.error(err); e.acting = false; this.busy = false; e.atb = 0; });
   },
 
   pickMove(e) {

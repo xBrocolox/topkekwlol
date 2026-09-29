@@ -18,7 +18,7 @@ const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ?
 const ROOT = path.resolve(__dirname, '..', '..');
 const FFMPEG = process.env.FFMPEG || 'ffmpeg';
 const FONTS = process.env.FONTS_DIR || '';
-const BOSS = arg('boss', 'regent'), LEVEL = +arg('level', 21), SEED = +arg('seed', 1);
+const BOSS = arg('boss', 'regent'), LEVEL = +arg('level', 20), SEED = +arg('seed', 6), TIER = +arg('tier', 2), MAL = +arg('malice', 100);
 const OUT = path.resolve(arg('out', path.join(__dirname, 'out', 'vermilion-requiem-hard-mode.mp4')));
 const PREVIEW = +arg('preview', 0);          // capture only the first N seconds (pipeline test)
 const W = 1920, H = 1080, FPS = 60, TITLE_SECS = 2.6, RESULT_HOLD = 3.4, END_SECS = 3.8, MAX_SECS = 150;
@@ -41,26 +41,26 @@ const BOSS_INFO = { regent: { name: 'NULL REGENT', bg: 'datacore', map: 'datacor
   }
 
   // ---- scenario: Hard difficulty, an even-handed late-game party, no assist ----
-  await page.evaluate(async ([boss, level, info]) => {
+  await page.evaluate(async ([boss, level, info, TIER, MAL]) => {
     const V = window.__vr, G = V.Game, M = V.Main;
     M.paused = true;
     G.settings.diff = 2; G.settings.assist = false; G.settings.autoRing = false; G.settings.atb = 'wait'; G.settings.textSpeed = 55;
     G.S = G.newState();
     for (const id of ['ilse', 'tally']) G.addMember(id, level);
-    const tier = level >= 20 ? 3 : level >= 12 ? 2 : 1;
+    const tier = TIER;
     for (const id of G.S.party) {
       const c = G.S.chars[id]; c.lv = level; c.eq.armor = ['a_0', 'a_1', 'a_2', 'a_3'][tier];
       if (tier > 0) c.eq.weapon = 'w_' + id[0] + tier;
       const st = G.stats(id); c.hp = st.hp; c.mp = st.mp;
     }
-    G.S.chars.ilse.mal = 62;                       // Fusion becomes available mid-fight
+    G.S.chars.ilse.mal = MAL;                      // Ilse arrives with her Malice gauge full: Fusion is on the menu
     for (const f of ['tut_done', 'ilse_joined', 'tally_joined', 'fusion', 'oriel_met']) G.setFlag(f);
     G.S.party = ['vesper', 'ilse', 'tally', 'gaspard'];
     G.S.inv = { hi_tonic: 3, hi_ether: 2, feather: 1 };
     await V.Field.load(info.map); G.setScene(V.Field); G.busy = 0; V.Gfx.fade = 0; V.Tw.clear();
     V.Snd.rec = []; V.Snd.recT = 0; M.capT = 0;
-  }, [BOSS, LEVEL, BOSS_INFO]);
-  await page.evaluate(installDirector, { seed: SEED, ringSD: 2.6, ringMiss: 0.03, mistake: 0.06 });
+  }, [BOSS, LEVEL, BOSS_INFO, TIER, MAL]);
+  await page.evaluate(installDirector, { seed: SEED, ringSD: 2.6, ringMiss: 0.03, mistake: 0.12 });
 
   // ---- overlay: title card, HARD badge, end card ----
   await page.evaluate(([info, level, TITLE_SECS]) => {
@@ -114,13 +114,13 @@ const BOSS_INFO = { regent: { name: 'NULL REGENT', bg: 'datacore', map: 'datacor
   let fought = false, resultAt = null, endStarted = false, endAt = null, frames = 0, outcome = 'unknown';
   const t0 = Date.now(); let last = t0;
   for (;;) {
-    const st = await page.evaluate(([boss, info, TITLE_SECS]) => {
+    const st = await page.evaluate(([boss, info, TITLE_SECS, seed]) => {
       const V = window.__vr, M = V.Main, B = V.Battle;
-      if (M.capT >= TITLE_SECS - 0.2 && !window.__fought) { window.__fought = true; B.fight([boss], { noAmbush: true, bg: info.bg, bgm: 'boss', xpMul: 1 }); }
+      if (M.capT >= TITLE_SECS - 0.2 && !window.__fought) { window.__fought = true; R.s = ((seed * 7919 + 13) >>> 0) || 1; B.fight([boss], { noAmbush: true, bg: info.bg, bgm: 'boss', xpMul: 1 }); }
       M.captureStep();
       const c = document.getElementById('game');
       return { url: c.toDataURL('image/png'), t: M.capT, mode: B.active ? B.mode : 'off', hp: B.foes && B.foes[0] ? B.foes[0].hp / B.foes[0].maxhp : 1 };
-    }, [BOSS, BOSS_INFO, TITLE_SECS]);
+    }, [BOSS, BOSS_INFO, TITLE_SECS, SEED]);
     const buf = Buffer.from(st.url.slice(st.url.indexOf(',') + 1), 'base64');
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
     frames++;

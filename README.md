@@ -49,7 +49,7 @@ Four systems, blended so each one changes what you do:
 - **Data Drain & charging bosses** *(.hack)*. Bosses **charge** devastating moves you can see coming: **Tally's Data Drain** and **Rootkit** interrupt them (and steal HP/MP).
 - **Fusion** *(Shadow Hearts)*. Ilse's **Malice** builds as she suffers. At 100 she can **Fuse** into the Black Swan for three empowered turns.
 
-Options (Menu → Config): **Difficulty** (Story / Normal / Hard), **Timing assist** (wider windows), **Auto Judgment Ring**, battle time (Wait / Active), text speed, volumes.
+Options (Menu → Config): **Difficulty** (Story / Normal / Hard: Hard makes enemies hit 35% harder *and* act 15% faster), **Timing assist** (wider windows), **Auto Judgment Ring**, battle time (Wait / Active), text speed, volumes.
 
 ![ring](docs/screenshots/03-judgment-ring.png)
 ![parry](docs/screenshots/04-telegraphed-parry.png)
