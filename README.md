@@ -24,7 +24,7 @@ Single-file build (for sharing / hosting anywhere): `node tools/build.mjs` → `
 | Run | hold Shift | RUN |
 | Switch ready hero in battle | `Q` / `E` | — |
 
-Gamepads work too. Progress is saved to `localStorage` (Menu → Save, or at any Inkwell).
+Gamepad input is wired up but untested. Progress is saved to `localStorage` (Menu → Save, or at any Inkwell).
 
 ## The game
 
@@ -37,7 +37,7 @@ Vesper, a Chronicler's apprentice, bears the **Judgment Halo**. On the night of 
 | **III — +300** | Terminus (Root Town), the Datacore | Null Regent | **Tally** |
 | **IV** | Lacuna, the Unpainted Hour | The Curator (two forms) | |
 
-Roughly 2 hours for a first play including exploring. Nine maps (five hand-built, four procedurally generated with a fixed seed), 15 enemy types, 6 bosses, a 12-entry lore Terminal, a bestiary, shops, gear and 30 levels.
+A vertical slice: about an hour of play if you explore (I have not timed a human run; the bot-driven story test clears it in far less). Nine maps (five hand-built, four procedurally generated from fixed seeds), 14 enemy types, 6 boss forms, a 12-entry lore Terminal, a bestiary, three shops, gear and 30 levels.
 
 ## Ring-Time Battle
 
@@ -70,7 +70,7 @@ Options (Menu → Config): **Difficulty** (Story / Normal / Hard), **Timing assi
 | `src/util.js` `src/input.js` | RNG, colour maths, tweens; keyboard/gamepad/touch → actions |
 | `src/gfx.js` | Two-layer display (pixel-perfect 480×270 world + hi-res UI), the `Pix` pixel-art painter (rim-light + outline post-process), external-asset loader |
 | `src/art_chars.js` | Procedural field sprites, skeleton-posed battle sprites, expressive portraits |
-| `src/art_enemies.js` | 14 creatures and 6 bosses composed from shapes |
+| `src/art_enemies.js` | 14 creatures and 6 boss forms composed from shapes |
 | `src/art_world.js` | 7 tilesets, 30 props, 9 backdrops |
 | `src/audio.js` | WebAudio synth (pluck/pad/organ/choir formants/bell/drums), reverb, step sequencer, 15 tracks, 30+ SFX |
 | `src/data.js` | Party, skills, techs, items, gear, enemies, encounter tables, map builders, Terminal |
