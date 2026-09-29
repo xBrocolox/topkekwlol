@@ -25,12 +25,16 @@ const Gfx = {
     L.imageSmoothingEnabled = false;
     U = this.ctx;
     addEventListener('resize', () => this.resize());
+    if (window.VR_ARTIFACT && window.ResizeObserver) new ResizeObserver(() => this.resize()).observe(document.body);
     this.resize();
   },
 
   resize() {
     const dpr = window.devicePixelRatio || 1;
-    const vw = window.innerWidth, vh = window.innerHeight;
+    // hosted as an embedded page: fit inside <body> minus the side gutter; otherwise use the window
+    const host = window.VR_ARTIFACT ? document.body : null, gut = window.VR_GUTTER || 0;
+    const vw = host ? Math.max(120, host.clientWidth - 2 * gut) : window.innerWidth;
+    const vh = host ? Math.max(90, host.clientHeight) : window.innerHeight;
     const fit = Math.min(vw / W, vh / H);
     const f = fit * dpr;
     let k = Math.floor(f);

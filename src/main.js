@@ -135,6 +135,9 @@ const Main = {
     Gfx.init(); Input.init(); Game.loadSettings();
     const unlock = () => Snd.unlock();
     addEventListener('keydown', unlock); addEventListener('pointerdown', unlock); addEventListener('touchstart', unlock, { passive: true });
+    // tap / click the canvas to start from the title screen (also focuses embedded frames for key input)
+    this_canvas = document.getElementById('game');
+    if (this_canvas) { this_canvas.tabIndex = 0; this_canvas.addEventListener('pointerdown', () => { try { this_canvas.focus({ preventScroll: true }); } catch (e) { /* ignore */ } if (Game.scene === Title && Title.stage === 'press') Input.pend.ok = true; }); }
     try { if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) { const t = document.getElementById('touch'); if (t) t.classList.add('on'); Input.lastDevice = 'touch'; } } catch (e) { /* ignore */ }
     try { await Promise.race([Promise.all([document.fonts.load('700 12px Cinzel'), document.fonts.load('700 12px "Cormorant Garamond"'), document.fonts.load('400 12px "Share Tech Mono"')]), wait0(1200)]); } catch (e) { /* offline fonts: fall back */ }
     await Promise.race([Assets.load(), wait0(2500)]);
@@ -209,6 +212,7 @@ const Main = {
     await Gfx.fadeTo(0, 1.2);
   },
 };
+let this_canvas = null;
 const wait0 = ms => new Promise(r => setTimeout(r, ms));
 
 window.addEventListener('load', () => Main.boot());

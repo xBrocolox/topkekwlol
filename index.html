@@ -26,11 +26,14 @@
   #touch [data-a=cancel] { right: 96px; bottom: 30px; }
   #touch [data-a=menu] { right: 16px; top: 12px; width: 42px; height: 42px; font-size: 14px; }
   #touch [data-a=run] { right: 20px; bottom: 148px; width: 42px; height: 42px; font-size: 11px; }
+  #rotate { display: none; position: fixed; left: 0; right: 0; top: 16%; text-align: center; color: #b8a8c8; font: 500 13px 'Cormorant Garamond', Georgia, serif; letter-spacing: 0.04em; pointer-events: none; padding: 0 24px; }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate { display: block; } }
   noscript { color: #f4ecda; font: 16px Georgia, serif; }
 </style>
 </head>
 <body>
 <canvas id="game" width="960" height="540"></canvas>
+<div id="rotate">Turn your phone sideways for a bigger picture.</div>
 <div id="touch">
   <div class="dp">
     <button data-a="up">▲</button><button data-a="left">◀</button><button data-a="right">▶</button><button data-a="down">▼</button>
