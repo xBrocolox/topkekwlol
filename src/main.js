@@ -129,7 +129,7 @@ const Credits = {
 };
 
 const Main = {
-  last: 0, acc: 0,
+  last: 0, acc: 0, turbo: 1, onStep: null,
 
   async boot() {
     Gfx.init(); Input.init(); Game.loadSettings();
@@ -148,7 +148,7 @@ const Main = {
     const dt = Math.min(0.1, (ts - (this.last || ts)) / 1000); this.last = ts;
     this.acc += dt;
     let n = 0;
-    while (this.acc >= 1 / 60 && n++ < 6) { this.update(1 / 60); this.acc -= 1 / 60; }
+    while (this.acc >= 1 / 60 && n++ < 6) { for (let k = 0; k < this.turbo; k++) this.update(1 / 60); this.acc -= 1 / 60; }
     if (n >= 6) this.acc = 0;
     try { this.draw(); } catch (e) { console.error('draw error', e); }
     requestAnimationFrame(t => this.frame(t));
@@ -156,7 +156,8 @@ const Main = {
 
   update(dt) {
     Input.begin(dt);
-    UI.tick(dt); Tw.update(dt); Gfx.update(dt); Toast.update(dt); Banner.update(dt);
+    if (this.onStep) this.onStep(dt);
+    UI.tick(dt); Tw.update(dt); Gfx.update(dt); if (!Menu.active && !Shop.active) Toast.update(dt); Banner.update(dt);
     const sc = Game.scene; if (!sc) return;
     let blocked = false;
     if (Shop.active) blocked = Shop.update(dt);
@@ -168,7 +169,7 @@ const Main = {
   draw() {
     const sc = Game.scene; if (!sc) return;
     Gfx.begin(); sc.draw(); Gfx.present(); sc.drawUI && sc.drawUI(); Gfx.post();
-    Menu.draw(); Shop.draw(); Toast.draw(); Banner.draw(); Dlg.draw();
+    Menu.draw(); Shop.draw(); if (!Menu.active && !Shop.active) Toast.draw(); Banner.draw(); Dlg.draw();
   },
 
   reset() {
@@ -211,4 +212,4 @@ const Main = {
 const wait0 = ms => new Promise(r => setTimeout(r, ms));
 
 window.addEventListener('load', () => Main.boot());
-window.__vr = { Game, Field, Battle, Story, Main, Menu, Dlg, Input, Tw, Title, Snd, Gfx, Art, Assets, TECHS, SKILLS, ENEMIES, CHARS };
+window.__vr = { Game, Field, Battle, Story, Main, Menu, Dlg, Input, Tw, Title, Snd, Gfx, Art, Assets, TECHS, SKILLS, ENEMIES, CHARS, ITEMS, EQUIP, MAPDEFS, FX, Toast, Shop };

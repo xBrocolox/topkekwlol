@@ -32,8 +32,11 @@ const Gfx = {
     const dpr = window.devicePixelRatio || 1;
     const vw = window.innerWidth, vh = window.innerHeight;
     const fit = Math.min(vw / W, vh / H);
-    let k = Math.floor(fit * dpr);
-    if (k < 1) k = fit * dpr;         // tiny screens: allow fractional
+    const f = fit * dpr;
+    let k = Math.floor(f);
+    // integer scaling keeps pixels perfectly crisp; but if it would waste a lot of the screen
+    // (phones, odd window sizes) use the fractional fit instead.
+    if (k < 1 || f - k >= 0.4) k = Math.round(f * 100) / 100;
     k = Math.max(k, 0.5);
     this.k = k;
     this.canvas.width = Math.round(W * k);
@@ -232,10 +235,36 @@ const Assets = {
     const keys = this.keys();
     return Promise.all(keys.map(k => new Promise(res => {
       const i = new Image();
-      i.onload = () => { this.img[k] = i; this.loaded++; res(); };
-      i.onerror = () => res();
+      i.onload = () => {
+        // sprites: knock out a flat background if the image has no transparency
+        this.img[k] = /^(battle|enemy)_/.test(k) ? this.cutout(i) : i; this.loaded++; res();
+      };
+      i.onerror = () => { console.warn('asset failed to load: ' + k); res(); };
       i.src = this.base + k + '.png';
     })));
+  },
+  /* Flood-fill from the corners removing pixels close to the corner colour. */
+  cutout(im) {
+    try {
+      const w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0);
+      const d = x.getImageData(0, 0, w, h), px = d.data;
+      const at = (i) => i * 4;
+      if ([0, w - 1, (h - 1) * w, h * w - 1].some(i => px[at(i) + 3] < 250)) return c; // already has transparency
+      const cs = [0, w - 1, (h - 1) * w, h * w - 1].map(i => [px[at(i)], px[at(i) + 1], px[at(i) + 2]]);
+      const ref = cs[0], tol = 46;
+      const near = (i) => Math.abs(px[at(i)] - ref[0]) + Math.abs(px[at(i) + 1] - ref[1]) + Math.abs(px[at(i) + 2] - ref[2]) < tol * 3 / 1.6;
+      const seen = new Uint8Array(w * h), stack = [0, w - 1, (h - 1) * w, h * w - 1];
+      while (stack.length) {
+        const i = stack.pop(); if (seen[i] || !near(i)) continue;
+        seen[i] = 1; px[at(i) + 3] = 0;
+        const xx = i % w, yy = (i / w) | 0;
+        if (xx > 0) stack.push(i - 1); if (xx < w - 1) stack.push(i + 1); if (yy > 0) stack.push(i - w); if (yy < h - 1) stack.push(i + w);
+      }
+      x.putImageData(d, 0, 0);
+      return c;
+    } catch (e) { return im; }
   },
   has(k) { return !!this.img[k]; },
   /* smooth-downscale an external image to a target box, preserving aspect */

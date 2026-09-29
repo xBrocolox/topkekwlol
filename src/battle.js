@@ -74,7 +74,7 @@ const Battle = {
       const d = ENEMIES[id], art = Art.enemy(id), [x, y] = slots[i] || slots[0];
       return {
         side: 'e', id, d, name: d.name, hp: d.hp, maxhp: d.hp, lvl: d.lvl, s: { atk: d.atk, def: d.def, mag: d.mag, res: d.res, spd: d.spd },
-        atb: 0, stat: {}, x, y, scale: d.scale || 2, art, ox: 0, oy: 0, flash: 0, alive: true, dead: 0, charging: null, stunT: 0, seen: 0, halfDone: false, bob: R.range(0, 6),
+        atb: 0, stat: {}, x, y, scale: art.ext ? 1 : (d.scale || 2), art, ox: 0, oy: 0, flash: 0, alive: true, dead: 0, charging: null, stunT: 0, seen: 0, halfDone: false, bob: R.range(0, 6),
         slot: i, boss: !!d.boss, appear: 0, readyMove: null, tick: 0, shown: d.hp,
       };
     });
@@ -102,7 +102,6 @@ const Battle = {
     if (c.stat.stun || c.stunT > 0) return 0;
     let r = c.s.spd * 100 / 72;
     if (c.stat.haste) r *= 1.5; if (c.stat.slow) r *= 0.6;
-    if (c.side === 'e' && c.boss) r *= 0.85;
     return r;
   },
   pose(c, p, t = 0.3) { c.pose = p; c.poseT = t; },
@@ -177,10 +176,8 @@ const Battle = {
         if (c.charging.t >= c.charging.mv.ch) { c.readyMove = c.charging.mv; c.charging = null; this.turnQ.unshift(c); }
         continue;
       }
-      if (c.atb < 100) {
-        c.atb = Math.min(100, c.atb + this.rate(c) * dt);
-        if (c.atb >= 100 && !this.turnQ.includes(c)) { this.turnQ.push(c); if (c.side === 'p') { c.guard = false; Snd.sfx('ready'); } }
-      }
+      if (c.atb < 100) c.atb = Math.min(100, c.atb + this.rate(c) * dt);
+      if (c.atb >= 100 && !this.turnQ.includes(c) && !(c.stunT > 0)) { this.turnQ.push(c); if (c.side === 'p') { c.guard = false; Snd.sfx('ready'); } }
     }
   },
   dot(c, pct, col) {
@@ -254,7 +251,7 @@ const Battle = {
     if (def.fuse && Game.flag('fusion') && a.mal >= 100 && !a.fused) items.push({ label: 'Fuse', k: 'fuse', col: '#c0a0ff' });
     items.push({ label: 'Guard', k: 'guard' });
     if (!this.foes.some(f => f.boss) && !this.foes.some(f => f.d.noEscape) && !this.o.noEscape) items.push({ label: 'Flee', k: 'flee' });
-    const m = new ListMenu({ x: this.cardX(a), y: 202 - (items.length * 12 + 10), w: 92, rows: items.length, rowH: 12, size: 9, items });
+    const m = new ListMenu({ x: Math.min(this.cardX(a), W - 96), y: 202 - (items.length * 12 + 10), w: 92, rows: items.length, rowH: 12, size: 9, items });
     this.cmd.menu = m; this.cmd.stage = 'main';
   },
   buildSkills() {
@@ -263,7 +260,7 @@ const Battle = {
     const items = list.map(id => { const s = SKILLS[id]; return { label: s.name, right: s.mp ? s.mp : '', sk: id, disabled: a.mp < s.mp, k: 'skill' }; });
     if (!items.length) items.push({ label: '(none yet)', disabled: true });
     const rows = Math.min(6, items.length);
-    this.cmd.menu = new ListMenu({ x: this.cardX(a) + 40, y: 202 - (rows * 12 + 10), w: 122, rows, rowH: 12, size: 9, items });
+    this.cmd.menu = new ListMenu({ x: Math.min(this.cardX(a) + 40, W - 126), y: 202 - (rows * 12 + 10), w: 122, rows, rowH: 12, size: 9, items });
     this.cmd.stage = 'skills';
   },
   availTechs(a) {
@@ -284,7 +281,7 @@ const Battle = {
       return { label: t.name, right: t.mp, tech: id, disabled: !ok, col: '#f4d878', k: 'tech' };
     });
     const rows = Math.min(5, items.length);
-    this.cmd.menu = new ListMenu({ x: this.cardX(a) + 30, y: 202 - (rows * 12 + 10), w: 132, rows, rowH: 12, size: 9, items });
+    this.cmd.menu = new ListMenu({ x: Math.min(this.cardX(a) + 30, W - 136), y: 202 - (rows * 12 + 10), w: 132, rows, rowH: 12, size: 9, items });
     this.cmd.stage = 'techs';
   },
   buildItems() {
@@ -292,7 +289,7 @@ const Battle = {
     const items = Object.keys(Game.S.inv).filter(id => ITEMS[id]).map(id => ({ label: ITEMS[id].name, right: '×' + Game.S.inv[id], item: id, k: 'item' }));
     if (!items.length) items.push({ label: '(no items)', disabled: true });
     const rows = Math.min(6, items.length);
-    this.cmd.menu = new ListMenu({ x: this.cardX(a) + 30, y: 202 - (rows * 12 + 10), w: 132, rows, rowH: 12, size: 9, items });
+    this.cmd.menu = new ListMenu({ x: Math.min(this.cardX(a) + 30, W - 136), y: 202 - (rows * 12 + 10), w: 132, rows, rowH: 12, size: 9, items });
     this.cmd.stage = 'items';
   },
 
@@ -436,7 +433,10 @@ const Battle = {
     this.pose(a, sk.stat === 'mag' || isHeal ? 'cast' : 'attack', 0.5);
     const n = sk.ring.n;
     const perHit = sk.pow;
-    let cur = targets[0], landed = 0, totalDmg = 0, critN = 0;
+    if (!isHeal && !this.alive('e').length) return;
+    let cur = targets[0] && (isHeal || targets[0].alive) ? targets[0] : (isHeal ? targets[0] : this.alive('e')[0]);
+    if (!cur) return;
+    let landed = 0, totalDmg = 0, critN = 0;
     const foesHit = new Set();
     const res = await this.runRing(a, sk.ring, { name: sk.name, col: elCol, n }, (i, q) => {
       if (q === 'miss') return;
@@ -446,7 +446,7 @@ const Battle = {
       if (isHeal) {
         const tg = cur.alive || sk.type === 'heal' ? cur : cur;
         const st = a.s.mag * (a.fused ? 1.35 : 1);
-        const amt = Math.round(st * perHit * mult / n * 1.6 + 4);
+        const amt = Math.round(st * perHit * mult / n * 1.05 + 3);
         tg.hp = Math.min(tg.maxhp, tg.hp + amt);
         const m = this.head(tg); FX.text(m.x, m.y, '+' + amt, '#80ffb0', 11);
         FX.preset('heal', a.x, a.y, this.mid(tg).x, this.mid(tg).y + 14, '#80ffb0'); Snd.sfx('heal');
@@ -490,7 +490,7 @@ const Battle = {
     let defS = magic ? t.s.res : t.s.def;
     if (t.stat.defup) defS *= 1.3; if (t.stat.sap) defS *= 0.85;
     const lckCrit = R.chance(a.s.lck * 0.004) ? 1.4 : 1;
-    let d = st * perHit * mult * 36 / (36 + defS) * this.elemMul(t, sk.elem) * R.range(0.92, 1.08) * lckCrit;
+    let d = st * perHit * mult * DEFK / (DEFK + defS) * this.elemMul(t, sk.elem) * R.range(0.92, 1.08) * lckCrit;
     if (t.charging) d *= 1.0;
     return Math.max(1, d);
   },
@@ -538,7 +538,8 @@ const Battle = {
     const elCol = ELEM[tech.elem].col;
     for (const m of mem) this.pose(m, m.s.mag > m.s.atk ? 'cast' : 'attack', 0.6);
     const isAll = tech.tgt === 'all';
-    let cur = act.targets[0];
+    let cur = act.targets[0] && act.targets[0].alive ? act.targets[0] : this.alive('e')[0];
+    if (!cur) return;
     if (['slash', 'cleave', 'pierce', 'spin'].includes(tech.anim)) for (const m of mem) this.lunge(m, isAll ? { x: 190, y: 158 } : cur, 0.25, 30 + mem.indexOf(m) * 14);
     await wait(0.3);
     const avg = mem.reduce((s, m) => s + Math.max(m.s.atk, m.s.mag), 0) / mem.length;
@@ -555,7 +556,7 @@ const Battle = {
         if (!t.alive) continue;
         const magic = TECHS[act.tech].elem === 'ink' || TECHS[act.tech].elem === 'gilt' || TECHS[act.tech].elem === 'volt';
         const defS = magic ? t.s.res : t.s.def;
-        const dmg = Math.max(1, avg * (tech.pow / n) * mult * 36 / (36 + defS) * this.elemMul(t, tech.elem) * R.range(0.92, 1.08));
+        const dmg = Math.max(1, avg * (tech.pow / n) * mult * DEFK / (DEFK + defS) * this.elemMul(t, tech.elem) * R.range(0.92, 1.08));
         const wk = this.elemMul(t, tech.elem);
         this.hitFx(src, t, tech.anim, elCol, q === 'crit', dmg, wk);
         this.applyDmg(t, dmg, { weak: wk > 1 }); foesHit.add(t);
@@ -744,8 +745,9 @@ const Battle = {
     const magic = mv.e && mv.e !== 'phys';
     let a = magic ? e.s.mag : e.s.atk; if (e.stat.atkup) a *= 1.3; if (e.stat.sap) a *= 0.75;
     let d = t.s[magic ? 'res' : 'def']; if (t.stat.defup) d *= 1.3;
-    let dmg = a * mv.p * 36 / (36 + d) * R.range(0.92, 1.08);
+    let dmg = a * mv.p * DEFK / (DEFK + d) * R.range(0.92, 1.08);
     if (t.stat.shield) dmg *= 0.6; if (t.guard) dmg *= 0.5;
+    dmg *= [0.65, 1, 1.35][Game.settings.diff === undefined ? 1 : Game.settings.diff];
     return Math.max(1, dmg);
   },
 
@@ -770,7 +772,7 @@ const Battle = {
 
   async counter(v, e) {
     if (!v.alive || !e.alive) return;
-    const dmg = Math.max(1, Math.max(v.s.atk, v.s.mag) * 0.9 * 36 / (36 + e.s.def) * R.range(0.92, 1.08));
+    const dmg = Math.max(1, Math.max(v.s.atk, v.s.mag) * 0.9 * DEFK / (DEFK + e.s.def) * R.range(0.92, 1.08));
     v.atb = Math.min(100, v.atb + 22);
     if (v.atb >= 100 && !this.turnQ.includes(v)) { this.turnQ.push(v); }
     e.atb = Math.max(0, e.atb - 8);
@@ -837,15 +839,21 @@ const Battle = {
     for (const id of drops) Game.add(id, 1);
     Game.S.gold += gold;
     const rows = [];
+    // carry battle HP/MP into the save data first so level-up gains stack on top
+    for (const p of this.party) { const c = Game.S.chars[p.id]; c.hp = Math.max(0, Math.round(p.hp)); c.mp = Math.round(p.mp); }
     for (const id of Game.S.party) {
       const inActive = this.party.find(p => p.id === id);
       const share = inActive ? xp : Math.round(xp * 0.5);
       const ups = Game.giveXP(id, share);
       rows.push({ id, share, ups, inActive });
-      if (inActive) { const c = Game.S.chars[id], st = Game.stats(id); inActive.hp = Math.min(st.hp, Math.max(inActive.hp, c.hp)); inActive.maxhp = st.hp; inActive.maxmp = st.mp; inActive.mp = Math.min(st.mp, c.mp); }
     }
-    // dead members come back with a sliver
-    for (const p of this.party) { const c = Game.S.chars[p.id]; if (!p.alive) { p.alive = true; p.hp = Math.max(1, Math.round(p.maxhp * 0.15)); p.pose = 'idle'; } c.hp = Math.round(p.hp); c.mp = Math.round(p.mp); }
+    // dead members come back with a sliver; everyone syncs back to the combatant
+    for (const p of this.party) {
+      const c = Game.S.chars[p.id], st = Game.stats(p.id);
+      if (!p.alive || c.hp <= 0) { c.hp = Math.max(1, Math.round(st.hp * 0.15)); p.alive = true; p.pose = 'idle'; }
+      c.hp = Math.min(st.hp, c.hp); c.mp = Math.min(st.mp, c.mp);
+      p.hp = c.hp; p.mp = c.mp; p.maxhp = st.hp; p.maxmp = st.mp; p.lv = c.lv;
+    }
     this.result = { xp, gold, drops, rows, t: 0, page: 0, leveled: rows.some(r => r.ups.length) };
     if (this.result.leveled) Snd.sfx('levelup');
     this.mode = 'result'; this.busy = false;

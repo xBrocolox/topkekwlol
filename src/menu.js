@@ -144,14 +144,14 @@ const Menu = {
     const slot = this.data.slot, c = Game.S.chars[this.who];
     const items = [{ label: '(unequip)', id: null }];
     for (const id in Game.S.gear) if (Game.S.gear[id] > 0 && EQUIP[id].slot === slot && (!EQUIP[id].who || EQUIP[id].who.includes(this.who))) items.push({ label: EQUIP[id].name, id, right: '×' + Game.S.gear[id] });
-    this.m = this.list(items, { x: 126, y: 78, w: 220, rows: Math.min(6, items.length), title: cap(slot) });
+    this.m3 = this.list(items, { x: 126, y: 94, w: 220, rows: Math.min(4, items.length), title: cap(slot) });
     this.stage = 'equipList';
   },
   upEquipList() {
-    const r = this.m.update();
+    const r = this.m3.update();
     if (r === 'cancel') { this.buildEquipSlots(); return; }
     if (r === 'ok') {
-      const c = Game.S.chars[this.who], slot = this.data.slot, id = this.m.cur.id;
+      const c = Game.S.chars[this.who], slot = this.data.slot, id = this.m3.cur.id;
       const old = c.eq[slot];
       if (old) Game.S.gear[old] = (Game.S.gear[old] || 0) + 1;
       if (id) { Game.S.gear[id]--; if (Game.S.gear[id] <= 0) delete Game.S.gear[id]; }
@@ -205,6 +205,7 @@ const Menu = {
     const spd = { 35: 'Slow', 55: 'Normal', 90: 'Fast', 999: 'Instant' };
     const items = [
       { label: 'Text speed', right: spd[s.textSpeed] || 'Normal', k: 'ts' },
+      { label: 'Difficulty', right: ['Story', 'Normal', 'Hard'][s.diff === undefined ? 1 : s.diff], k: 'diff' },
       { label: 'Battle time', right: s.atb === 'wait' ? 'Wait' : 'Active', k: 'atb' },
       { label: 'Timing assist', right: s.assist ? 'On' : 'Off', k: 'assist' },
       { label: 'Auto Judgment Ring', right: s.autoRing ? 'On' : 'Off', k: 'auto' },
@@ -223,6 +224,7 @@ const Menu = {
     if (!d) return;
     const s = Game.settings, k = this.m2.cur.k;
     if (k === 'ts') { const v = [35, 55, 90, 999]; s.textSpeed = v[(v.indexOf(s.textSpeed) + d + 4) % 4] || 55; }
+    if (k === 'diff') s.diff = (((s.diff === undefined ? 1 : s.diff) + d + 3) % 3);
     if (k === 'atb') s.atb = s.atb === 'wait' ? 'active' : 'wait';
     if (k === 'assist') s.assist = !s.assist;
     if (k === 'auto') s.autoRing = !s.autoRing;
@@ -245,11 +247,11 @@ const Menu = {
     else {
       this.m.draw();
       switch (this.stage) {
-        case 'pick': this.m2.draw(); this.drawParty(260); break;
+        case 'pick': this.m2.draw(); this.drawParty(262, true); break;
         case 'items': this.m2.draw(); this.drawItemDesc(); if (this.data.itemTarget) this.data.tm.draw(); break;
         case 'status': this.drawStatus(); break;
         case 'equipSlot': this.m2.draw(); this.drawEquipInfo(); break;
-        case 'equipList': this.m2.draw(); this.m.draw(); this.drawEquipInfo(); break;
+        case 'equipList': this.m2.draw(); this.m3.draw(); this.drawEquipInfo(); break;
         case 'party': this.m2.draw(); this.drawParty(336, true); break;
         case 'terminal': this.m2.draw(); this.drawTerminal(); break;
         case 'best': this.m2.draw(); this.drawBest(); break;
@@ -291,14 +293,14 @@ const Menu = {
     UI.panel(126, 34, 344, 176);
     const pc = Art.portrait(C.look, 'n'); U.imageSmoothingEnabled = false; U.drawImage(pc, 134, 42, 64, 64); U.imageSmoothingEnabled = true;
     UI.text(C.name, 206, 56, { size: 15, font: UI.fT, col: C.col }); UI.text(C.role + ' — Lv ' + c.lv, 206, 70, { size: 9, col: UI.dim });
-    const bio = UI.wrap(C.bio, 250, 8.5); bio.forEach((l, i) => UI.text(l, 206, 84 + i * 10, { size: 8.5, col: '#d8ccc0', weight: 500 }));
+    const bio = UI.wrap(C.bio, 138, 8.5); bio.forEach((l, i) => UI.text(l, 206, 84 + i * 10, { size: 8.5, col: '#d8ccc0', weight: 500 }));
     const rows = [['HP', st.hp], ['MP', st.mp], ['ATK', st.atk], ['DEF', st.def], ['MAG', st.mag], ['RES', st.res], ['SPD', st.spd], ['LCK', st.lck]];
-    rows.forEach(([k, v], i) => { const x = 134 + (i % 4) * 58, y = 122 + Math.floor(i / 4) * 14; UI.text(k, x, y, { size: 8, col: UI.dim }); UI.text(String(v), x + 50, y, { size: 9, align: 'right' }); });
+    rows.forEach(([k, v], i) => { const x = 134 + (i % 4) * 52, y = 124 + Math.floor(i / 4) * 14; UI.text(k, x, y, { size: 8, col: UI.dim }); UI.text(String(v), x + 46, y, { size: 9, align: 'right' }); });
     const eq = ['weapon', 'armor', 'charm'].map(s => `${cap(s)}: ${c.eq[s] ? EQUIP[c.eq[s]].name : '—'}`);
     eq.forEach((t, i) => UI.text(t, 134, 156 + i * 10, { size: 8.5, col: '#e8dcc8' }));
-    UI.text('SKILLS', 300, 122, { size: 8, col: UI.gold, font: UI.fT });
+    UI.text('SKILLS', 352, 60, { size: 8.5, col: UI.gold, font: UI.fT });
     const sk = Game.skillsOf(id); const upcoming = CHARS[id].skills.filter(([s, l]) => l > c.lv);
-    [C.attack].concat(sk).forEach((s, i) => UI.text(SKILLS[s].name + (SKILLS[s].mp ? `  ${SKILLS[s].mp}` : ''), 300, 133 + i * 9, { size: 8, col: '#e8dcc8' }));
+    [C.attack].concat(sk).forEach((s, i) => { UI.text(SKILLS[s].name, 352, 72 + i * 11, { size: 8.5, col: '#e8dcc8' }); if (SKILLS[s].mp) UI.text(String(SKILLS[s].mp), 462, 72 + i * 11, { size: 8, align: 'right', col: '#a8c8ff' }); });
     if (upcoming.length) UI.text(`Next: ${SKILLS[upcoming[0][0]].name} at Lv ${upcoming[0][1]}`, 134, 198, { size: 8, col: UI.dim });
     UI.text('← → switch   X back', 462, 204, { size: 7, align: 'right', col: UI.dim });
   },
@@ -307,8 +309,8 @@ const Menu = {
     const id = this.who, c = Game.S.chars[id], st = Game.stats(id);
     UI.panel(126, 176, 344, 34);
     const slot = this.data.slot;
-    if (this.stage === 'equipList' && this.m.cur) {
-      const it = this.m.cur.id;
+    if (this.stage === 'equipList' && this.m3.cur) {
+      const it = this.m3.cur.id;
       const S2 = JSON.parse(JSON.stringify(Game.S)); S2.chars[id].eq[slot] = it;
       const after = Game.statsOf(S2, id);
       let x = 134;

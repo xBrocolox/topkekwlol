@@ -195,7 +195,7 @@ Story.setup.opera = function (F) {
   if (!done) { F.addEnemy(8.5, 14.5, ['phantom', 'phantom']); F.addEnemy(21.5, 16.5, ['phantom', 'wisp', 'wisp']); F.addEnemy(11.5, 19.5, ['phantom', 'phantom']); }
   if (!Game.flag('ilse_joined')) {
     const il = F.addNPC('ilse', 15.5, 16.0, 'ilse', { dir: 'down', noTalk: true });
-    F.addTrigger('ilse_meet', 13, 17, 5, 3, async () => {
+    F.addTrigger('ilse_meet', 13, 16.6, 5, 2.4, async () => {
       F.faceTo(il, F.player);
       await S('Ilse', 'You can hear her too, can\'t you?');
       await S('Vesper', 'Hear who?', 'n');
@@ -270,7 +270,7 @@ Story.setup.catacombs = function (F) {
       const res = await Story.bossFight(F, 'warden', { bg: 'catacombs' });
       if (res !== 'win') return;
       F.removeEnt(w);
-      Game.setFlag('warden_defeated'); Game.setFlag('gate1'); codex('halo');
+      Game.setFlag('warden_defeated'); Game.setFlag('gate1'); Game.setFlag('gate2'); codex('halo');
       Game.busy++;
       await S('Gilded Warden', 'GATE... OPEN. THE HOUR IS ALWAYS... NOW.', 'n');
       await N('The Warden folds into itself, and the ring of gears behind it begins, slowly, to turn.');
@@ -369,7 +369,7 @@ Story.setup.temple = function (F) {
       const res = await Story.bossFight(F, 'chorister', { bg: 'temple' });
       if (res !== 'win') return;
       F.removeEnt(c);
-      Game.setFlag('chorister_defeated'); Game.setFlag('gate2'); Game.setFlag('gate3'); codex('score'); codex('hour');
+      Game.setFlag('chorister_defeated'); Game.setFlag('gate3'); codex('score'); codex('hour');
       Game.busy++;
       await N('The Marionette loosens, all at once, like a held breath. Its chest opens and a slender scroll of light drifts out. The Sunken Score.');
       await S('Ilse', 'It shows the road. Oriel was right. There is a Frame beyond this one, and it is... cold.', 'shock');

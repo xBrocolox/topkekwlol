@@ -1,0 +1,15 @@
+{
+  "name": "vermilion-requiem",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A JRPG in four frames: Judgment Rings, telegraphed parries, combo techs and a dying server. Runs in the browser with zero dependencies.",
+  "scripts": {
+    "serve": "python3 -m http.server 8000",
+    "build": "node tools/build.mjs",
+    "manifest": "node tools/make_manifest.mjs",
+    "prompts": "node tools/make_prompts.mjs",
+    "test:story": "node tools/test/story.js",
+    "test:balance": "node tools/test/balance.js mid"
+  },
+  "devDependencies": { "playwright": "^1.56.0" }
+}

@@ -32,7 +32,7 @@ const Snd = {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       this.ac = new AC();
       const ac = this.ac;
-      this.master = ac.createGain(); this.master.gain.value = 0.8;
+      this.master = ac.createGain(); this.master.gain.value = 0.7;
       const comp = ac.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
       this.master.connect(comp); comp.connect(ac.destination);
       this.mus = ac.createGain(); this.mus.gain.value = Game.settings.music;
@@ -211,6 +211,29 @@ const Snd = {
     if (this.timer) { clearInterval(this.timer); this.timer = null; }
     if (this.cur && this.ac) { const b = this.cur.bus, t = this.ac.currentTime; try { b.gain.setValueAtTime(b.gain.value, t); b.gain.linearRampToValueAtTime(0.0001, t + 0.5); setTimeout(() => { try { b.disconnect(); } catch (e) { /* ignore */ } }, 1800); } catch (e) { /* ignore */ } }
     this.cur = null;
+  },
+
+
+  /* Test helper: render `secs` of a track offline and report peak / rms / NaN. */
+  async renderTest(name, secs = 8) {
+    const tr = TRACKS[name]; if (!tr) return null;
+    const sr = 22050, off = new OfflineAudioContext(2, sr * secs, sr);
+    const saved = { ac: this.ac, master: this.master, mus: this.mus, sfxG: this.sfxG, revIn: this.revIn, noiseBuf: this.noiseBuf };
+    this.ac = off; this.master = off.createGain(); this.master.connect(off.destination);
+    this.mus = off.createGain(); this.mus.connect(this.master); this.sfxG = this.mus;
+    const conv = off.createConvolver(), len = sr * 1.2, buf = off.createBuffer(2, len, sr);
+    for (let c = 0; c < 2; c++) { const d = buf.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    conv.buffer = buf; this.revIn = off.createGain(); this.revIn.connect(conv); conv.connect(this.master);
+    const nl = sr, nb = off.createBuffer(1, nl, sr), nd = nb.getChannelData(0); for (let i = 0; i < nl; i++) nd[i] = Math.random() * 2 - 1; this.noiseBuf = nb;
+    const c = this.build(tr); let t = 0.05, step = 0;
+    while (t < secs) {
+      for (const e of c.ev[step]) { if (e.drum) this.drum(e.drum, t, e.v, this.mus); else for (const m of e.m) this.voice(e.inst, mtof(m), t, e.d * c.stepDur, e.v, this.mus); }
+      t += c.stepDur; step = (step + 1) % c.total;
+    }
+    const out = await off.startRendering(), d = out.getChannelData(0);
+    let peak = 0, sum = 0, nan = 0; for (let i = 0; i < d.length; i++) { const v = d[i]; if (v !== v) nan++; else { peak = Math.max(peak, Math.abs(v)); sum += v * v; } }
+    Object.assign(this, saved);
+    return { name, peak: +peak.toFixed(3), rms: +Math.sqrt(sum / d.length).toFixed(4), nan, bars: tr.chords.length, bpm: tr.bpm };
   },
 
   /* ------------------------------------------------------------------ SFX */

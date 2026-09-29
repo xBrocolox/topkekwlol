@@ -1,0 +1,254 @@
+[
+  {
+    "file": "portrait_vesper.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of a 19-year-old woman, dark plum ponytail, crimson long coat with gold trim, white scarf, rapier, a thin glowing red ring (the Judgment Halo) on her finger. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "battle_vesper.png",
+    "kind": "battle sprite",
+    "prompt": "Full-body character of a 19-year-old woman, dark plum ponytail, crimson long coat with gold trim, white scarf, rapier, a thin glowing red ring (the Judgment Halo) on her finger, side view facing LEFT, dynamic ready stance, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "portrait ~768x1024, flat background is auto-removed"
+  },
+  {
+    "file": "portrait_gaspard.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of a 27-year-old bearded engineer in a black bowler hat with brass goggles, teal long coat with brass trim, heavy revolver. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "battle_gaspard.png",
+    "kind": "battle sprite",
+    "prompt": "Full-body character of a 27-year-old bearded engineer in a black bowler hat with brass goggles, teal long coat with brass trim, heavy revolver, side view facing LEFT, dynamic ready stance, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "portrait ~768x1024, flat background is auto-removed"
+  },
+  {
+    "file": "portrait_ilse.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of a pale medium with long silver hair, small black hat with a violet feather and veil, black mourning dress with violet trim, black parasol, sorrowful eyes. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "battle_ilse.png",
+    "kind": "battle sprite",
+    "prompt": "Full-body character of a pale medium with long silver hair, small black hat with a violet feather and veil, black mourning dress with violet trim, black parasol, sorrowful eyes, side view facing LEFT, dynamic ready stance, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "portrait ~768x1024, flat background is auto-removed"
+  },
+  {
+    "file": "portrait_tally.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of a cheerful hacker avatar, spiky cyan hair, glowing cyan visor, dark teal jacket with neon circuit lines, glitch-staff, pixel-glitch artifacts. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "battle_tally.png",
+    "kind": "battle sprite",
+    "prompt": "Full-body character of a cheerful hacker avatar, spiky cyan hair, glowing cyan visor, dark teal jacket with neon circuit lines, glitch-staff, pixel-glitch artifacts, side view facing LEFT, dynamic ready stance, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "portrait ~768x1024, flat background is auto-removed"
+  },
+  {
+    "file": "portrait_curator.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of a masked figure all in ivory: tall white top hat, blank white mask with red painted eyes, long white robes with vermilion lining, giant paintbrush dripping vermilion. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "battle_curator.png",
+    "kind": "battle sprite",
+    "prompt": "Full-body character of a masked figure all in ivory: tall white top hat, blank white mask with red painted eyes, long white robes with vermilion lining, giant paintbrush dripping vermilion, side view facing LEFT, dynamic ready stance, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "portrait ~768x1024, flat background is auto-removed"
+  },
+  {
+    "file": "portrait_oriel.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of an ancient bearded sage in emerald hooded robes with gold trim, kind eyes, white beard. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "portrait_aura.png",
+    "kind": "portrait",
+    "prompt": "Bust portrait of a small pale child-like AI with long white-blue hair, glowing pale blue eyes, white dress, subtle glitch particles. Face centred and large, plain dark background, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "square 1024x1024, face in the upper-middle"
+  },
+  {
+    "file": "battle_aura.png",
+    "kind": "battle sprite",
+    "prompt": "Full-body character of a small pale child-like AI with long white-blue hair, glowing pale blue eyes, white dress, subtle glitch particles, side view facing LEFT, dynamic ready stance, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "portrait ~768x1024, flat background is auto-removed"
+  },
+  {
+    "file": "bg_aurelle.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: a Belle Époque city plaza at dusk, gaslamps, a clocktower, a huge vermilion halo ring in the sky, patches of blank white paper where the sky is erased. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_opera.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: an opera house stage, red velvet curtains, gilded proscenium, chandelier, footlights, empty and eerie. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_catacombs.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: ancient catacomb arches receding into darkness, torches, bone piles, green mist. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_woods.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: a twilight enchanted forest, giant dark trunks, shafts of gold light, fireflies, teal mist. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_temple.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: a marble temple hall with verdigris-stained pillars, a huge stained-glass rose window, golden light shafts. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_terminus.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: a synthwave digital city at night, cyan grid floor, magenta sun, floating data cubes. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_datacore.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: a corrupted red-and-black server core, glitch bars, a huge red eye in a ring, magenta static. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "bg_lacuna.png",
+    "kind": "battle backdrop",
+    "prompt": "Wide battle backdrop: an endless white paper void with faint pencil sketches, a giant golden picture frame, vermilion ink dripping from above. Empty foreground floor for characters to stand on, no characters, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "title_bg.png",
+    "kind": "title art",
+    "prompt": "Title screen art: a vast vermilion halo ring over a silhouetted Belle Époque skyline at dusk, embers, ink drips, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack. Leave the upper third clear for a logo.",
+    "spec": "16:9, 1920x1080"
+  },
+  {
+    "file": "enemy_wisp.png",
+    "kind": "enemy",
+    "prompt": "Lacuna Wisp: A flame of unpainted canvas. Where it touches, things forget themselves. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_inkslime.png",
+    "kind": "enemy",
+    "prompt": "Ink Slime: Spilled ink that learned to want. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_moth.png",
+    "kind": "enemy",
+    "prompt": "Umbral Moth: Drawn to lamplight, and to the last warm thing in a room. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_puppet.png",
+    "kind": "enemy",
+    "prompt": "Bone Marionette: Strings lead up into the dark. Someone is still playing. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_phantom.png",
+    "kind": "enemy",
+    "prompt": "Opera Phantom: It applauds every wound. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_sentry.png",
+    "kind": "enemy",
+    "prompt": "Brass Sentry: Guards a door that no longer exists. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_hound.png",
+    "kind": "enemy",
+    "prompt": "Patina Hound: Green with age, not envy. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_thornseraph.png",
+    "kind": "enemy",
+    "prompt": "Thorn Seraph: A hymn grown into a hedge. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_golem.png",
+    "kind": "enemy",
+    "prompt": "Choir Golem: A statue that remembers how to sing, and only how to sing. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_sporeling.png",
+    "kind": "enemy",
+    "prompt": "Spore Cap: Cheerful. Contagious. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_glitchsprite.png",
+    "kind": "enemy",
+    "prompt": "Packet Sprite: A fragment with no header and plenty of opinions. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_bugknight.png",
+    "kind": "enemy",
+    "prompt": "Bugged Knight: Half its textures failed to load. It resents this. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_daemon.png",
+    "kind": "enemy",
+    "prompt": "Daemon Serpent: A background process that got ideas. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_firewall.png",
+    "kind": "enemy",
+    "prompt": "Firewall Drone: It does not let anything through, including you. Creature/monster design, full body, facing RIGHT, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_cosette.png",
+    "kind": "boss",
+    "prompt": "Echo of Cosette: A soprano the world forgot. Her final aria has not ended. Creature/monster design, full body, facing RIGHT, imposing boss scale, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_warden.png",
+    "kind": "boss",
+    "prompt": "Gilded Warden: Guardian of the First Gate. It rings once for every era it has outlived. Creature/monster design, full body, facing RIGHT, imposing boss scale, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_chorister.png",
+    "kind": "boss",
+    "prompt": "Chorister Marionette: The seal-keeper of the Choir. Its strings were cut; it kept singing. Creature/monster design, full body, facing RIGHT, imposing boss scale, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_regent.png",
+    "kind": "boss",
+    "prompt": "Null Regent: The Loom's own deletion daemon. It has been promoted, and it is furious. Creature/monster design, full body, facing RIGHT, imposing boss scale, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_curator1.png",
+    "kind": "boss",
+    "prompt": "The Curator: She has lived this hour nine hundred times. Creature/monster design, full body, facing RIGHT, imposing boss scale, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  },
+  {
+    "file": "enemy_curator2.png",
+    "kind": "boss",
+    "prompt": "The Curator — Unframed: No frame. No mask. No more Hours. Creature/monster design, full body, facing RIGHT, imposing boss scale, flat solid magenta (#ff00ff) background, no shadow, painterly JRPG key art, Belle Époque gothic, deep vermilion, ivory and aged gold palette, dramatic rim light, in the mood of Clair Obscur, Chrono Trigger, Shadow Hearts and .hack.",
+    "spec": "about 1024px on the long side, flat background auto-removed"
+  }
+]

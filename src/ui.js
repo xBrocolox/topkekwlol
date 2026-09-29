@@ -86,7 +86,7 @@ const UI = {
    ------------------------------------------------------------------------ */
 const Toast = {
   list: [],
-  add(msg, col = UI.gold) { this.list.push({ msg, col, t: 0 }); if (this.list.length > 4) this.list.shift(); },
+  add(msg, col = UI.gold) { this.list.push({ msg, col, t: 0 }); if (this.list.length > 3) this.list.shift(); },
   update(dt) { for (const t of this.list) t.t += dt; this.list = this.list.filter(t => t.t < 3.2); },
   draw() {
     let y = 20;

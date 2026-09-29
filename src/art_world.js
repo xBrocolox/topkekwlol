@@ -122,7 +122,7 @@ const THEMES = {
     accent: g => TP.flags(g, '#4a4460', '#221e2e', 3), wall: g => TP.bricks(g, '#4a4458', '#1c1826', '#625c78', 0), top: g => TP.roof(g, '#14101e', '#2a2438'),
     water: (g, f) => TP.water(g, '#0a0812', '#2a5a4a', f), carpet: g => TP.carpet(g, '#3a1a2a', '#8a6a3a'), grass: g => TP.flags(g, '#403a50', '#221e2e', 5),
     props: { T: 'pillar_marble', t: 'skullpile', L: 'torch', S: 'statue_angel', P: 'pillar_marble', B: 'bookshelf', F: 'brazier', D: 'drape', b: 'barrel' },
-    ambient: '#101830', amb: 0.4, light: '#ff9a40',
+    ambient: '#101830', amb: 0.3, light: '#ff9a40',
   },
   verdigris: {
     floor: g => TP.grass(g, '#3a6a48', '#8ac078', 0), alt: g => TP.grass(g, '#6a6448', '#a89868', 1),
@@ -302,16 +302,16 @@ const BG = {
     for (let k = 0; k < 6; k++) { const y = 100 + Math.round(Math.pow(k / 6, 1.7) * 35); g.r(0, y, 240, 1, '#802858'); }
   },
   lacuna(g) {
-    vgrad(g, 0, 135, '#fbf8f2', '#eee6d8');
+    vgrad(g, 0, 135, '#ece5f2', '#d2c8de');
     const r = new RNG(31);
     for (let i = 0; i < 40; i++) { const x = r.int(0, 239), y = r.int(0, 110); g.line(x, y, x + r.int(-30, 30), y + r.int(-6, 6), '#d8d0c4'); }
     ring(g, 120, 62, 46, '#c8283e', 2); ring(g, 120, 62, 40, '#f0d078', 1);
     g.r(60, 20, 120, 2, '#c9a24a'); g.r(60, 100, 120, 2, '#c9a24a'); g.r(60, 20, 2, 82, '#c9a24a'); g.r(178, 20, 2, 82, '#c9a24a');
     for (let i = 0; i < 16; i++) { const x = 10 + i * 15 + r.int(-4, 4); const l = r.int(8, 46); g.r(x, 0, 2, l, '#c8283e'); g.ell(x + 1, l, 2, 2, '#c8283e'); }
     for (let i = 0; i < 6; i++) { const x = r.int(20, 220), y = r.int(90, 130); g.ell(x, y, r.int(5, 12), r.int(2, 4), '#c8283e'); }
-    vgrad(g, 104, 135, '#e8dfd0', '#c8beae', 0, null, false);
-    for (let i = -14; i <= 14; i++) g.line(120 + i * 4, 104, 120 + i * 30, 135, '#cfc6b8');
-    for (let y = 106; y < 135; y += 6) g.r(0, y, 240, 1, '#cfc6b8');
+    vgrad(g, 104, 135, '#cfc4d8', '#a89cb8', 0, null, false);
+    for (let i = -14; i <= 14; i++) g.line(120 + i * 4, 104, 120 + i * 30, 135, '#b6aac6');
+    for (let y = 106; y < 135; y += 6) g.r(0, y, 240, 1, '#b6aac6');
   },
   title(g) {
     vgrad(g, 0, 150, '#0a0418', '#8a1a30'); vgrad(g, 96, 150, '#8a1a30', '#ff7a4a');

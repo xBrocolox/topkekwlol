@@ -412,9 +412,16 @@ Art.battle = function (id, pose = 'idle', frame = 0) {
   if (this.cache[key]) return this.cache[key];
   const o = LOOKS[id] || LOOKS.citizenM;
   let c;
-  const ext = Assets.has('battle_' + id) && pose === 'idle' ? Assets.fit('battle_' + id, 48, 64) : null;
-  if (ext) c = ext;
-  else if (pose === 'down') {
+  const extImg = Assets.has('battle_' + id) ? Assets.img['battle_' + id] : null;
+  if (extImg && pose !== 'down') {
+    // external art: fit into the same padded box + anchor as the procedural sprite so all battle code is unchanged
+    const [cc, x] = mkCanvas(BW + 2, BH + 2);
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+    const s = Math.min(40 / extImg.width, 38 / extImg.height), w = extImg.width * s, h = extImg.height * s;
+    const dx = { attack: -5, cast: 0, hurt: 4, guard: -2, win: 0, idle: 0 }[pose] || 0, dy = (pose === 'win' ? -2 : pose === 'idle' && frame ? -1 : 0);
+    x.drawImage(extImg, BCX + 1 - w / 2 + dx, BGY + 2 - h + dy, w, h);
+    c = cc;
+  } else if (pose === 'down') {
     const src = this.battle(id, 'hurt', 0);
     const [cc, x] = mkCanvas(src.height, src.width);
     x.translate(cc.width / 2, cc.height / 2); x.rotate(-Math.PI / 2); x.drawImage(src, -src.width / 2, -src.height / 2);

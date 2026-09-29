@@ -329,17 +329,35 @@ const ENEMY_ART = {
   },
 };
 
-const ENEMY_SIZE = {}; // filled lazily from generated canvas
+/* Procedural size of an enemy (drives external-art fitting and field size). */
+Art.enemyProcSize = function (id) {
+  const key = 'es:' + id;
+  if (this.cache[key]) return this.cache[key];
+  const def = typeof ENEMIES !== 'undefined' ? ENEMIES[id] : null;
+  const fn = ENEMY_ART[(def && def.art) || id] || ENEMY_ART.wisp;
+  const c = fn();
+  return (this.cache[key] = { w: c.width, h: c.height, c });
+};
 
+/* Battle-size art. External PNGs (assets/ai/enemy_<id>.png) are fitted to the
+   same on-screen box the procedural sprite would occupy, and flagged .ext so
+   the battle draws them at 1:1 instead of pixel-doubling. */
 Art.enemy = function (id) {
   const key = 'e:' + id;
   if (this.cache[key]) return this.cache[key];
-  let c = null;
   const def = typeof ENEMIES !== 'undefined' ? ENEMIES[id] : null;
-  if (Assets.has('enemy_' + id)) c = Assets.fit('enemy_' + id, 120, 112);
-  if (!c) {
-    const fn = ENEMY_ART[(def && def.art) || id];
-    c = fn ? fn() : ENEMY_ART.wisp();
-  }
+  const ps = this.enemyProcSize(id), sc = (def && def.scale) || 2;
+  let c = null;
+  if (Assets.has('enemy_' + id)) { c = Assets.fit('enemy_' + id, Math.round(ps.w * sc), Math.round(ps.h * sc)); if (c) c.ext = true; }
+  if (!c) c = ps.c;
+  return (this.cache[key] = c);
+};
+/* Field-size art (roughly the procedural size, never the doubled one). */
+Art.enemyField = function (id) {
+  const key = 'ef:' + id;
+  if (this.cache[key]) return this.cache[key];
+  const ps = this.enemyProcSize(id);
+  let c = ps.c;
+  if (Assets.has('enemy_' + id)) c = Assets.fit('enemy_' + id, ps.w, ps.h) || c;
   return (this.cache[key] = c);
 };

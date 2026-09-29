@@ -1,0 +1,13 @@
+[["wisps L1",["wisp","wisp"],1,["vesper","gaspard"],{"tonic":4}],
+ ["slimes L3",["inkslime","inkslime","moth"],3,["vesper","gaspard","ilse"],{"tonic":4}],
+ ["cosette L4",["cosette"],4,["vesper","gaspard","ilse"],{"tonic":4,"ether":1}],
+ ["sentry+puppet L6",["sentry","puppet"],6,["vesper","gaspard","ilse"],{"tonic":4}],
+ ["warden L8",["warden"],8,["vesper","gaspard","ilse"],{"tonic":5,"ether":2}],
+ ["hounds L10",["hound","hound"],10,["vesper","gaspard","ilse"],{"tonic":4,"hi_tonic":2}],
+ ["shroom pack L11",["sporeling","sporeling","hound"],11,["vesper","gaspard","ilse"],{"hi_tonic":3}],
+ ["golem+seraph L13",["golem","thornseraph"],13,["vesper","gaspard","ilse"],{"hi_tonic":3}],
+ ["chorister L16",["chorister"],16,["vesper","ilse","tally"],{"hi_tonic":4,"hi_ether":2,"feather":1}],
+ ["bugknights L19",["bugknight","bugknight"],19,["vesper","ilse","tally"],{"hi_tonic":4}],
+ ["daemon pack L20",["daemon","firewall"],20,["vesper","ilse","tally"],{"hi_tonic":4}],
+ ["regent L22",["regent"],22,["vesper","ilse","tally"],{"hi_tonic":4,"hi_ether":3,"feather":2}],
+ ["curator L25",["curator1"],25,["vesper","ilse","tally"],{"mega_tonic":3,"hi_tonic":3,"hi_ether":3,"feather":2}]]

@@ -5,7 +5,7 @@
    ========================================================================== */
 
 const Game = {
-  settings: { textSpeed: 55, atb: 'wait', assist: false, music: 0.55, sfx: 0.8, autoRing: false },
+  settings: { textSpeed: 55, atb: 'wait', assist: false, music: 0.55, sfx: 0.8, autoRing: false, diff: 1 },
   S: null,
   scene: null,
   busy: 0,

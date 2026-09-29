@@ -531,7 +531,7 @@ const Field = {
       L.fillStyle = '#e8c868'; L.fillRect(sx - 5, sy - 3, 10, 2); L.fillRect(sx - 4, sy - 6, 8, 2); L.fillRect(sx - 3, sy - 9 + Math.round(b), 6, 2); L.fillRect(sx - 1, sy - 13 + Math.round(b), 2, 4);
       L.fillStyle = 'rgba(255,255,255,0.7)'; L.fillRect(sx - 4, sy - 6, 2, 1);
     } else if (e.kind === 'enemy' || e.kind === 'bossvis') {
-      const spr = Art.enemy(e.lead);
+      const spr = Art.enemyField(e.lead);
       const bob = Math.round(Math.sin(e.bob) * 1.5);
       this.drawShadow(sx, sy, spr.width / 3);
       L.save();

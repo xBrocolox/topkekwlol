@@ -47,6 +47,8 @@ const CHARS = {
   },
 };
 
+/* defence softening constant: dmg *= DEFK / (DEFK + defence) */
+const DEFK = 70;
 const xpNeed = L => Math.round(14 * Math.pow(L, 1.45));
 const MAXLV = 30;
 
@@ -181,10 +183,10 @@ const SHOPS = {
 function mkEnemy(o) {
   const L = o.lvl, m = o.m || {};
   const e = {
-    hp: Math.round((30 + L * L * 1.9 + L * 22) * (m.hp || 1)),
-    atk: (8 + L * 2.3) * (m.atk || 1), def: (4 + L * 1.5) * (m.def || 1),
-    mag: (6 + L * 2) * (m.mag || 1), res: (4 + L * 1.3) * (m.res || 1),
-    spd: 8 + L * 0.2 + (m.spd || 0),
+    hp: Math.round((40 + L * 24 + L * L * 0.45) * (m.hp || 1)),
+    atk: (10 + L * 3.9) * (m.atk || 1), def: (4 + L * 1.5) * (m.def || 1),
+    mag: (8 + L * 3.3) * (m.mag || 1), res: (4 + L * 1.3) * (m.res || 1),
+    spd: 9 + L * 0.22 + (m.spd || 0),
     xp: Math.round((6 + L * 4) * (m.xp || 1)), gold: Math.round((4 + L * 3) * (m.gold || 1)),
   };
   return Object.assign(e, o, { id: o.id });
@@ -269,7 +271,7 @@ defEnemy('firewall', 'Firewall Drone', 'firewall', 17, { hp: 1.1, def: 1.3 }, {
 });
 
 /* --- Bosses --- */
-defEnemy('cosette', 'Echo of Cosette', 'cosette', 4, { hp: 11, xp: 9, gold: 12, mag: 1.3 }, {
+defEnemy('cosette', 'Echo of Cosette', 'cosette', 4, { hp: 11, xp: 9, gold: 12, mag: 1.4, atk: 1.3, spd: 2 }, {
   boss: true, scale: 2, bg: 'opera', bgm: 'boss', weak: ['gilt'], resist: ['ink'],
   desc: 'A soprano the world forgot. Her final aria has not ended.',
   moves: [
@@ -280,7 +282,7 @@ defEnemy('cosette', 'Echo of Cosette', 'cosette', 4, { hp: 11, xp: 9, gold: 12, 
   ],
   half: 'cosette_half', drops: [['c_song', 1]],
 });
-defEnemy('warden', 'Gilded Warden', 'warden', 8, { hp: 12, def: 1.3, xp: 8, gold: 10 }, {
+defEnemy('warden', 'Gilded Warden', 'warden', 8, { hp: 14, def: 1.3, xp: 8, gold: 10, spd: 3, atk: 1.4 }, {
   boss: true, scale: 2, bg: 'catacombs', bgm: 'boss', weak: ['volt'], resist: ['phys'],
   desc: 'Guardian of the First Gate. It rings once for every era it has outlived.',
   moves: [
@@ -290,7 +292,7 @@ defEnemy('warden', 'Gilded Warden', 'warden', 8, { hp: 12, def: 1.3, xp: 8, gold
   ],
   half: 'warden_half', drops: [['c_gear', 1], ['hi_tonic', 1]],
 });
-defEnemy('chorister', 'Chorister Marionette', 'chorister', 16, { hp: 13, mag: 1.2, xp: 8, gold: 10 }, {
+defEnemy('chorister', 'Chorister Marionette', 'chorister', 16, { hp: 13, mag: 1.4, atk: 1.4, xp: 8, gold: 10, spd: 3 }, {
   boss: true, scale: 2, bg: 'temple', bgm: 'boss', weak: ['ink'], resist: ['gilt'],
   desc: 'The seal-keeper of the Choir. Its strings were cut; it kept singing.',
   moves: [
@@ -301,7 +303,7 @@ defEnemy('chorister', 'Chorister Marionette', 'chorister', 16, { hp: 13, mag: 1.
   ],
   half: 'chorister_half', drops: [['c_score', 1], ['mega_tonic', 1]],
 });
-defEnemy('regent', 'Null Regent', 'regent', 23, { hp: 14, xp: 8, gold: 10 }, {
+defEnemy('regent', 'Null Regent', 'regent', 23, { hp: 14, xp: 8, gold: 10, spd: 4, atk: 1.45, mag: 1.45 }, {
   boss: true, scale: 2, bg: 'datacore', bgm: 'boss', weak: ['gilt'], resist: ['volt'],
   desc: 'The Loom\'s own deletion daemon. It has been promoted, and it is furious.',
   moves: [
@@ -311,7 +313,7 @@ defEnemy('regent', 'Null Regent', 'regent', 23, { hp: 14, xp: 8, gold: 10 }, {
   ],
   half: 'regent_half', drops: [['c_null', 1], ['elixir', 1]],
 });
-defEnemy('curator1', 'The Curator', 'curator1', 26, { hp: 15, xp: 6, gold: 20 }, {
+defEnemy('curator1', 'The Curator', 'curator1', 26, { hp: 15, xp: 6, gold: 20, spd: 4, atk: 1.5, mag: 1.5 }, {
   boss: true, scale: 1.5, bg: 'lacuna', bgm: 'final', weak: ['ink'], resist: ['gilt'], noEscape: true,
   desc: 'She has lived this hour nine hundred times.',
   moves: [
@@ -320,7 +322,7 @@ defEnemy('curator1', 'The Curator', 'curator1', 26, { hp: 15, xp: 6, gold: 20 },
     { n: 'Varnish', p: 0, h: 0, self: { id: 'shield', dur: 10 }, w: 1, c: 'noshield' },
   ],
 });
-defEnemy('curator2', 'The Curator — Unframed', 'curator2', 27, { hp: 16, xp: 10, gold: 40 }, {
+defEnemy('curator2', 'The Curator — Unframed', 'curator2', 27, { hp: 16, xp: 10, gold: 40, spd: 5, atk: 1.55, mag: 1.55 }, {
   boss: true, scale: 1.5, bg: 'lacuna', bgm: 'final', weak: ['ink', 'volt'], noEscape: true,
   desc: 'No frame. No mask. No more Hours.',
   moves: [
@@ -475,7 +477,7 @@ const MAPDEFS = {};
     f.rows = mb.rows();
     MAPDEFS.catacombs = {
       name: 'Catacombs of the Understage', theme: 'catacomb', bgm: 'catacombs', bg: 'catacombs', rows: f.rows, enc: 'catacombs',
-      spawn: { x: f.start.x + 0.5, y: f.start.y + 0.5 }, ambient: 0.5, dark: 0.55, era: 1, gen: f, boss: 'warden', chests: 4, groups: 9,
+      spawn: { x: f.start.x + 0.5, y: f.start.y + 0.5 }, ambient: 0.5, dark: 0.48, era: 1, gen: f, boss: 'warden', chests: 4, groups: 9,
       chestItems: [['tonic', 3], ['ether', 2], ['panacea', 1], ['w_v1', 1], ['smoke', 2], ['cdx_lacuna', 1]],
     };
   }
