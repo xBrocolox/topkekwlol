@@ -129,7 +129,7 @@ const Credits = {
 };
 
 const Main = {
-  last: 0, acc: 0, turbo: 1, onStep: null,
+  last: 0, acc: 0, turbo: 1, onStep: null, paused: false, capT: 0, overlay: null,
 
   async boot() {
     Gfx.init(); Input.init(); Game.loadSettings();
@@ -148,6 +148,7 @@ const Main = {
   },
 
   frame(ts) {
+    if (this.paused) { this.last = ts; requestAnimationFrame(t => this.frame(t)); return; }
     const dt = Math.min(0.1, (ts - (this.last || ts)) / 1000); this.last = ts;
     this.acc += dt;
     let n = 0;
@@ -173,6 +174,13 @@ const Main = {
     const sc = Game.scene; if (!sc) return;
     Gfx.begin(); sc.draw(); Gfx.present(); sc.drawUI && sc.drawUI(); Gfx.post();
     Menu.draw(); Shop.draw(); if (!Menu.active && !Shop.active) Toast.draw(); Banner.draw(); Dlg.draw();
+    if (this.overlay) this.overlay(U, this.capT);
+  },
+
+  /* Deterministic single step for video capture: pause the live loop, then call this once per frame. */
+  captureStep(dt = 1 / 60) {
+    this.capT += dt; Snd.recT = this.capT;
+    this.update(dt); this.draw();
   },
 
   reset() {

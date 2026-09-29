@@ -99,6 +99,15 @@ node tools/test/balance.js mid   # every boss/encounter at its expected level (l
 
 The bot presses real inputs: it plays dialogue, drives the menus, hits Judgment Rings, parries and dodges, heals, uses Fusion and interrupts charging bosses. `Main.turbo` runs the sim faster than real time.
 
+## Capturing a showcase clip
+
+```sh
+FFMPEG=/path/to/ffmpeg-with-libx264 FONTS_DIR=/path/to/node_modules/@fontsource \
+  node tools/capture/showcase.js --boss regent --level 21 --seed 1 --out clip.mp4
+```
+
+Steps the game one 1/60 s frame at a time (`Main.captureStep`), pipes 1080p frames to ffmpeg, re-renders the recorded soundtrack offline and muxes an H.264 + AAC MP4 that Twitter/X accepts. A "director" input bot (`tools/capture/director.js`) plays the fight like a skilled human: menu navigation, Ring timing with human jitter, parries and dodges, healing, Fusion, and Data Drain interrupts. It only presses buttons; it cannot touch HP or damage.
+
 ## Credits
 
 Original characters, story, art, music and code. Inspired by, not derived from, the games above.

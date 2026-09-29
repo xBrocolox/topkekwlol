@@ -300,7 +300,7 @@ const Battle = {
     // switch between ready members
     if (c.stage === 'main' && (Input.hit('l') || Input.hit('r'))) {
       const rdy = this.turnQ.filter(x => x.side === 'p' && x.alive && x !== c.a);
-      if (rdy.length) { this.turnQ = this.turnQ.filter(x => x !== rdy[0]); this.turnQ.unshift(rdy[0]); this.openCmd(rdy[0]); return; }
+      if (rdy.length) { this.turnQ = this.turnQ.filter(x => x !== rdy[0] && x !== c.a); this.turnQ.unshift(rdy[0]); this.turnQ.push(c.a); this.openCmd(rdy[0]); return; }
     }
     const r = c.menu.update();
     if (c.menu.cur && this.descOf) this.desc = this.descOf(c.menu.cur);

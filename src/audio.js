@@ -24,6 +24,7 @@ function chordTones(name, oct) {
 }
 
 const Snd = {
+  rec: null, recT: 0, offline: false, tOff: 0,
   ac: null, master: null, mus: null, sfxG: null, wet: null, curName: null, cur: null, timer: null, started: false, noiseBuf: null,
 
   init() {
@@ -182,6 +183,7 @@ const Snd = {
   },
 
   play(name, o = {}) {
+    if (this.rec) this.rec.push({ t: this.recT, k: 'play', n: name, once: !!o.once });
     if (name === this.curName && !o.once) return;
     if (!this.ac || this.ac.state === 'suspended' && !this.started) { this.pending = { n: name, o }; this.curName = name; if (!this.ac) return; }
     this.stop();
@@ -208,6 +210,7 @@ const Snd = {
   },
   stopTimerSoon() { clearInterval(this.timer); this.timer = null; },
   stop() {
+    if (this.rec) this.rec.push({ t: this.recT, k: 'stop' });
     if (this.timer) { clearInterval(this.timer); this.timer = null; }
     if (this.cur && this.ac) { const b = this.cur.bus, t = this.ac.currentTime; try { b.gain.setValueAtTime(b.gain.value, t); b.gain.linearRampToValueAtTime(0.0001, t + 0.5); setTimeout(() => { try { b.disconnect(); } catch (e) { /* ignore */ } }, 1800); } catch (e) { /* ignore */ } }
     this.cur = null;
@@ -236,20 +239,66 @@ const Snd = {
     return { name, peak: +peak.toFixed(3), rms: +Math.sqrt(sum / d.length).toFixed(4), nan, bars: tr.chords.length, bpm: tr.bpm };
   },
 
+
+  /* Video capture: re-render a recorded event timeline (music segments + sfx) offline, in sync with the frames.
+     Returns interleaved 16-bit stereo PCM as a base64 string. */
+  async renderTimeline(events, dur, sr = 44100) {
+    const off = new OfflineAudioContext(2, Math.ceil(sr * dur), sr);
+    const saved = { ac: this.ac, master: this.master, mus: this.mus, sfxG: this.sfxG, revIn: this.revIn, noiseBuf: this.noiseBuf, wet: this.wet };
+    this.ac = off; this.offline = true; this.tOff = 0;
+    this.master = off.createGain(); this.master.gain.value = 0.7;
+    const comp = off.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
+    this.master.connect(comp); comp.connect(off.destination);
+    this.mus = off.createGain(); this.mus.gain.value = Game.settings.music; this.mus.connect(this.master);
+    this.sfxG = off.createGain(); this.sfxG.gain.value = Game.settings.sfx; this.sfxG.connect(this.master);
+    const len = sr * 2.4, buf = off.createBuffer(2, len, sr), conv = off.createConvolver();
+    for (let c = 0; c < 2; c++) { const d = buf.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    conv.buffer = buf; this.wet = off.createGain(); this.wet.gain.value = 0.3; conv.connect(this.wet); this.wet.connect(this.master);
+    this.revIn = off.createGain(); this.revIn.connect(conv);
+    const nb = off.createBuffer(1, sr, sr), nd = nb.getChannelData(0); for (let i = 0; i < sr; i++) nd[i] = Math.random() * 2 - 1; this.noiseBuf = nb;
+    // music segments
+    const segs = []; let cur = null;
+    for (const e of events) {
+      if (e.k === 'play') { if (cur && cur.n === e.n && !e.once) continue; if (cur) cur.end = e.t; cur = { n: e.n, start: e.t, end: dur, once: e.once }; segs.push(cur); }
+      else if (e.k === 'stop' && cur) { cur.end = e.t; cur = null; }
+    }
+    for (const seg of segs) {
+      const tr = TRACKS[seg.n]; if (!tr) continue;
+      const c = this.build(tr), bus = off.createGain(); bus.connect(this.mus);
+      if (seg.end < dur) { bus.gain.setValueAtTime(1, seg.end); bus.gain.linearRampToValueAtTime(0.0001, seg.end + 0.5); }
+      let t = seg.start + 0.05, step = 0;
+      while (t < Math.min(dur, seg.end + 0.5)) {
+        for (const e of c.ev[step]) { if (e.drum) this.drum(e.drum, t, e.v, bus); else for (const m of e.m) this.voice(e.inst, mtof(m), t, e.d * c.stepDur, e.v, bus); }
+        t += c.stepDur; step++;
+        if (step >= c.total) { if (seg.once) break; step = 0; }
+      }
+    }
+    for (const e of events) if (e.k === 'sfx' && e.t < dur) { this.tOff = e.t; this.sfx(e.n, e.a); }
+    this.tOff = 0;
+    const out = await off.startRendering();
+    const L_ = out.getChannelData(0), R_ = out.getChannelData(1), n = L_.length, pcm = new Int16Array(n * 2);
+    for (let i = 0; i < n; i++) { pcm[2 * i] = Math.max(-1, Math.min(1, L_[i])) * 32767; pcm[2 * i + 1] = Math.max(-1, Math.min(1, R_[i])) * 32767; }
+    Object.assign(this, saved); this.offline = false;
+    const bytes = new Uint8Array(pcm.buffer); let bin = ''; const CH = 0x8000;
+    for (let i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+    return btoa(bin);
+  },
+
   /* ------------------------------------------------------------------ SFX */
   tone(type, f0, f1, dur, v = 0.3, delay = 0, send = 0.1) {
-    if (!this.ac) return; const ac = this.ac, t = ac.currentTime + delay, g = ac.createGain();
+    if (!this.ac) return; const ac = this.ac, t = ac.currentTime + delay + this.tOff, g = ac.createGain();
     const o = ac.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
     o.connect(g); o.start(t); o.stop(t + dur + 0.1); this.env(g, t, 0.003, v, dur * 0.5, dur * 0.5); this.out(g, send, this.sfxG);
   },
   noise(dur, f0, f1, v = 0.3, type = 'bandpass', delay = 0, q = 1) {
-    if (!this.ac) return; const ac = this.ac, t = ac.currentTime + delay, g = ac.createGain();
+    if (!this.ac) return; const ac = this.ac, t = ac.currentTime + delay + this.tOff, g = ac.createGain();
     const n = ac.createBufferSource(); n.buffer = this.noiseBuf; const f = ac.createBiquadFilter(); f.type = type; f.Q.value = q;
     f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + dur);
     n.connect(f); f.connect(g); n.start(t, Math.random() * 0.4, dur + 0.1); this.env(g, t, 0.003, v, dur * 0.4, dur * 0.6); this.out(g, 0.12, this.sfxG);
   },
   sfx(name, arg) {
-    if (!this.ac || this.ac.state !== 'running') return;
+    if (this.rec) this.rec.push({ t: this.recT, k: 'sfx', n: name, a: arg });
+    if (!this.ac || (this.ac.state !== 'running' && !this.offline)) return;
     const T = (...a) => this.tone(...a), N = (...a) => this.noise(...a);
     switch (name) {
       case 'blip': T('square', 880, 880, 0.04, 0.08); break;
