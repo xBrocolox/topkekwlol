@@ -23,7 +23,7 @@ async function launch(opts = {}) {
     V.Main.onStep = () => {
       if (!bot.on) return;
       const { Game, Battle: B, Dlg, Menu, SKILLS, ITEMS } = V;
-      if (Dlg.active) { if ((bot.t++ % 2) === 0) press('ok'); return; }
+      if (Dlg.active) { if (Dlg.choice && bot.choiceLabel) { const i = Dlg.choice.options.findIndex(o => o.includes(bot.choiceLabel)); if (i >= 0) Dlg.choice.sel = i; } if ((bot.t++ % 2) === 0) press('ok'); return; }
       if (B.active) {
         if (B.ring) { const r = B.ring; if (r.endT <= 0) for (let i = 0; i < r.zones.length; i++) { const z = r.zones[i]; if (z.res === null && Math.abs(r.hand - z.c) < r.half * 0.5 && rnd() < bot.ringSkill) { press('ok'); break; } } return; }
         if (B.defw) { const d = B.defw; if (d.botTry === undefined) { d.botTry = rnd() < bot.parryRate; d.botKind = d.type === 'h' ? 'cancel' : (rnd() < bot.parryPref ? 'ok' : 'cancel'); d.botOff = (rnd() - 0.5) * 2 * (bot.jitter || 0.05); } if (d.botTry && !d.press && d.t >= d.T + d.botOff - 0.008 && d.t < d.T + d.botOff + 0.02) { press(d.botKind); } return; }

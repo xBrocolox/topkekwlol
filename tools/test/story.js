@@ -57,14 +57,16 @@ const { launch, OUT } = require('./harness');
   await snap('F6_chorister_done');
 
   console.log('7. gate -> Terminus, meet Tally');
-  await p.evaluate(() => { const F = window.__vr.Field; const g = F.ents.find(e => e.kind === 'gate'); F.interact(g); });
+  await p.evaluate(() => { window.__bot.choiceLabel = 'Terminus'; const F = window.__vr.Field; const g = F.ents.find(e => e.kind === 'gate'); F.interact(g); });
   await until('arrived terminus', () => window.__vr.Field.id === 'terminus' && window.__vr.Game.busy === 0, 40000);
+  await p.evaluate(() => { window.__bot.choiceLabel = null; });
   await tp(18, 18);
   await until('tally_joined', () => window.__vr.Game.S.flags.tally_joined && !window.__vr.Dlg.active && window.__vr.Game.busy === 0, 90000);
   await snap('F7_tally');
 
   console.log('8. datacore -> Regent');
   await warp('datacore'); await until('free', () => window.__vr.Game.busy === 0);
+  await p.evaluate(() => { const G = window.__vr.Game; G.S.party = ['vesper', 'ilse', 'tally']; });
   await setLv(22);
   const droom = await p.evaluate(() => { const g = window.__vr.Field.def.gen; return [g.last.cx, g.last.cy]; });
   await tp(droom[0] + 0.5, droom[1] + 1.5);
